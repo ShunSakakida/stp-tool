@@ -1,5 +1,5 @@
 #!/bin/bash
-# bash ./otp_aws_command.sh 8803bd6f-cedb-4904-a862-da5379092776 email
+# bash ./otp_aws_command.sh email 8803bd6f-cedb-4904-a862-da5379092776
 
 # Check if required arguments are provided
 if [ $# -lt 2 ]; then
@@ -7,8 +7,8 @@ if [ $# -lt 2 ]; then
     exit 1
 fi
 
-session_id=$1
-type=$2
+type=$1
+session_id=$2
 
 # Validate type argument
 if [ "$type" != "sms" ] && [ "$type" != "email" ]; then
