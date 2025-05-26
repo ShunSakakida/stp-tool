@@ -3,6 +3,8 @@
 # ベースURLとエンドポイントを定義
 base_url="http://localhost:8081"
 endpoint="/customer/signup"
+origin="http://localhost:3000"
+host="localhost:8081"
 
 # ランダムな電話番号とメールアドレスを生成
 random_phone_number="080$((RANDOM % 90000000 + 10000000))"
@@ -24,12 +26,12 @@ EOF
 
 # curlを使用してPOSTリクエストを送信
 response=$(curl -s -w "\n%{http_code}" -X POST "$base_url$endpoint" \
-  -H "Origin: http://localhost:3000" \
+  -H "Origin: ${origin}" \
   -H "Content-Type: application/json" \
   -H "User-Agent: PostmanRuntime/7.43.0" \
   -H "Accept: */*" \
   -H "Cache-Control: no-cache" \
-  -H "Host: localhost:8081" \
+  -H "Host: ${host}" \
   -H "Accept-Encoding: gzip, deflate, br" \
   -H "Connection: keep-alive" \
   -d "$payload")
@@ -57,7 +59,7 @@ session_id="$session_id"  # 先のリクエストで取得したセッションI
 payload=$(cat <<EOF
 {
   "emailAddress": "$email_address",
-  "sessionID": "$session_id"
+  "sessionID": "51fd0e61-177b-4dd6-a35b-c94f28074208"
 }
 EOF
 )
@@ -68,7 +70,7 @@ response=$(curl -s -w "\n%{http_code}" -X POST "$base_url/customer/otp/send/emai
   -H "User-Agent: PostmanRuntime/7.43.0" \
   -H "Accept: */*" \
   -H "Cache-Control: no-cache" \
-  -H "Host: localhost:8081" \
+  -H "Host: ${host}" \
   -H "Accept-Encoding: gzip, deflate, br" \
   -H "Connection: keep-alive" \
   -d "$payload")
@@ -113,7 +115,7 @@ verify_response=$(curl -s -w "\n%{http_code}" -X POST "$base_url/customer/otp/ve
   -H "User-Agent: PostmanRuntime/7.43.0" \
   -H "Accept: */*" \
   -H "Cache-Control: no-cache" \
-  -H "Host: localhost:8081" \
+  -H "Host: ${host}" \
   -H "Accept-Encoding: gzip, deflate, br" \
   -H "Connection: keep-alive" \
   -d "$verify_payload")
@@ -151,7 +153,7 @@ sms_response=$(curl -s -w "\n%{http_code}" -X POST "$base_url/customer/otp/send/
   -H "User-Agent: PostmanRuntime/7.43.0" \
   -H "Accept: */*" \
   -H "Cache-Control: no-cache" \
-  -H "Host: localhost:8081" \
+  -H "Host: ${host}" \
   -H "Accept-Encoding: gzip, deflate, br" \
   -H "Connection: keep-alive" \
   -d "$sms_payload")
@@ -196,7 +198,7 @@ sms_verify_response=$(curl -s -w "\n%{http_code}" -X POST "$base_url/customer/ot
   -H "User-Agent: PostmanRuntime/7.43.0" \
   -H "Accept: */*" \
   -H "Cache-Control: no-cache" \
-  -H "Host: localhost:8081" \
+  -H "Host: ${host}" \
   -H "Accept-Encoding: gzip, deflate, br" \
   -H "Connection: keep-alive" \
   -d "$sms_verify_payload")
