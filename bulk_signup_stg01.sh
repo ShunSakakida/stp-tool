@@ -12,15 +12,16 @@ fi
 echo "CSV file found"
 
 # Read the CSV file line by line
-while IFS=, read -r phone email; do
+while IFS=, read -r phone email customer_type; do
     # Remove any whitespace
     phone=$(echo $phone | tr -d ' ')
     email=$(echo $email | tr -d ' ')
+    customer_type=$(echo $customer_type | tr -d ' ')
 
-    echo "Processing: Phone: $phone, Email: $email"
+    echo "Processing: Phone: $phone, Email: $email, Customer Type: $customer_type"
 
     # Call signup_stg01.sh with phone and email
-    ./signup_stg01.sh "$phone" "$email"
+    ./signup_stg01.sh "$phone" "$email" "$customer_type"
 
     echo "signup completed"
 

@@ -1,14 +1,15 @@
 #!/bin/zsh
-# bash ./signup_stg01.sh 08059369965 shun.sakakida@kenedix-st.com
+# bash ./signup_stg01.sh 08059369965 shun.sakakida@kenedix-st.com individual
 
 
-if [ $# -lt 2 ]; then
+if [ $# -lt 3 ]; then
     echo "Usage: $0 <session_id> <type>"
     exit 1
 fi
 
 phone_number=$1
 email_address=$2
+customer_type=$3
 
 
 # ベースURLとエンドポイントを定義
@@ -24,7 +25,7 @@ type="signup"
 # リクエストのペイロードをJSON形式で作成
 payload=$(cat <<EOF
 {
-  "customerType": "individual",
+  "customerType": "$customer_type",
   "emailAddress": "$email_address",
   "phoneNumber": "$phone_number"
 }
@@ -52,6 +53,8 @@ if [ "$http_code" -eq 200 ]; then
   session_id=$(echo "$http_body" | jq -r '.sessionID')
 else
   echo "Request failed with status code: $http_code"
+  echo "Request failed with status body: $http_body"
+  exit 1
 fi
 
 ###############################################################
@@ -96,11 +99,13 @@ if [ "$http_code" -eq 200 ]; then
     echo "OTP retrieved successfully"
   else
     echo "Failed to retrieve OTP"
+    exit 1
   fi
 else
   echo "OTPSendEmail request failed with status code: $http_code"
   echo "Response:"
   echo "$http_body"
+  exit 1
 fi
 
 
@@ -141,6 +146,7 @@ else
   echo "OTPVerify request failed with status code: $verify_http_code"
   echo "Response:"
   echo "$verify_http_body"
+  exit 1
 fi
 
 ###############################################################
@@ -181,11 +187,13 @@ if [ "$sms_http_code" -eq 200 ]; then
     echo "OTP retrieved successfully"
   else
     echo "Failed to retrieve SMS OTP"
+    exit 1
   fi
 else
   echo "OTPSendSMS request failed with status code: $sms_http_code"
   echo "Response:"
   echo "$sms_http_body"
+  exit 1
 fi
 
 ###############################################################
@@ -230,4 +238,5 @@ else
   echo "OTPVerifySMS request failed with status code: $sms_verify_http_code"
   echo "Response:"
   echo "$sms_verify_http_body"
+  exit 1
 fi
