@@ -35,7 +35,7 @@ while IFS=, read -r phone email customer_type; do
     echo "Processing: Phone: $phone, Email: $email, Customer Type: $customer_type"
 
     # Call signup.sh with phone and email
-    ./signup_$environment.sh "$phone" "$email" "$customer_type"
+    ./signup.sh "$environment" "$phone" "$email" "$customer_type"
 
     echo "signup completed"
 
