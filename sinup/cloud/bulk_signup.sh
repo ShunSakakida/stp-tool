@@ -24,6 +24,7 @@ if [ ! -f "$file" ]; then
 fi
 
 echo "CSV file found"
+echo ""
 
 # Read the CSV file line by line
 while IFS=, read -r phone email customer_type; do
@@ -32,12 +33,12 @@ while IFS=, read -r phone email customer_type; do
     email=$(echo $email | tr -d ' ')
     customer_type=$(echo $customer_type | tr -d ' ')
 
-    echo "Processing: Environment: $environment, Phone: $phone, Email: $email, Customer Type: $customer_type"
-
+    echo "Processing: Environment: $environment, Phone: $phone, Email: $email, Customer Type: $customer_type ----------------------------------------"
+    echo ""
     # Call signup.sh with phone and email
-    ./signup.sh "$environment" "$phone" "$email" "$customer_type"
-
-    echo "signup completed"
-
-    echo "----------------------------------------"
+    access_token=$(./signup.sh "$environment" "$phone" "$email" "$customer_type")
+    echo ""
+    echo "$access_token"
+    echo ""
+    echo "signup completed ----------------------------------------"
 done < $file

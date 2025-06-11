@@ -20,6 +20,7 @@ if [ ! -f "$file" ]; then
     exit 1
 fi
 
+echo ""
 
 # Read the CSV file line by line
 while IFS=, read -r phone email; do
@@ -37,5 +38,6 @@ while IFS=, read -r phone email; do
         --profile stp-$environment \
         --output json | jq -r '.Items[].PK.S | sub("^customer#"; "")')
     echo "$customer_id"
+    echo "----------------------------------------"
 
 done < $file
