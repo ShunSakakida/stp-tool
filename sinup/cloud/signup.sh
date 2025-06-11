@@ -14,9 +14,6 @@ if [[ "$environment" != "dev" && "$environment" != "stg01" && "$environment" != 
     exit 1
 fi
 
-# Shift arguments to process the rest
-shift
-
 phone_number=$2
 email_address=$3
 customer_type=$4
