@@ -1,4 +1,5 @@
 #!/bin/zsh
+# bash ./bulk_signup.sh stg01
 # ./stg01.csv
 
 if [ $# -lt 1 ]; then
