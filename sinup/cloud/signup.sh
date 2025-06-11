@@ -59,8 +59,8 @@ http_code=$(echo "$response" | tail -n1)
 if [ "$http_code" -eq 200 ]; then
   session_id=$(echo "$http_body" | jq -r '.sessionID')
 else
-  echo "Request failed with status code: $http_code"
-  echo "Request failed with status body: $http_body"
+  echo "Request failed with status code: $http_code" >&2
+  echo "Request failed with status body: $http_body" >&2
   exit 1
 fi
 
@@ -109,7 +109,7 @@ if [ "$http_code" -eq 200 ]; then
     exit 1
   fi
 else
-  echo "OTPSendEmail request failed with status code: $http_code"
+  echo "OTPSendEmail request failed with status code: $http_code" >&2
   echo "Response:"
   echo "$http_body"
   exit 1
@@ -236,7 +236,7 @@ sms_verify_http_code=$(echo "$sms_verify_response" | tail -n1)
 if [ "$sms_verify_http_code" -eq 200 ]; then
   # アクセストークンを抽出して表示
   access_token=$(echo "$sms_verify_http_body" | jq -r '.accessToken')
-  echo "$access_token" >&2
+  echo "$access_token"
   exit 0
 else
   echo "OTPVerifySMS request failed with status code: $sms_verify_http_code" >&2
