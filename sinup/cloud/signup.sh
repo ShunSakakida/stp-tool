@@ -3,14 +3,14 @@
 
 
 if [ $# -lt 4 ]; then
-    echo "Usage: $0 <environment> <phone_number> <email_address> <customer_type>"
+    echo "Usage: $0 <environment> <phone_number> <email_address> <customer_type>" >&2
     exit 1
 fi
 
 # Check if the environment identifier is valid
 environment=$1
 if [[ "$environment" != "dev" && "$environment" != "stg01" && "$environment" != "stg02" ]]; then
-    echo "Invalid environment identifier. Must be one of: dev, stg01, stg02."
+    echo "Invalid environment identifier. Must be one of: dev, stg01, stg02." >&2
     exit 1
 fi
 
@@ -98,14 +98,14 @@ http_code=$(echo "$response" | tail -n1)
 
 # ステータスコードをチェックし、レスポンスを出力
 if [ "$http_code" -eq 200 ]; then
-  echo "OTPSendEmail request successful"
+  echo "OTPSendEmail request successful" >&2
   # OTPを取得
   otp=$(./otp.sh "email" "$session_id")
   if [ $? -eq 0 ]; then
     # do nothing
-    echo "OTP retrieved successfully"
+    echo "OTP retrieved successfully" >&2
   else
-    echo "Failed to retrieve OTP"
+    echo "Failed to retrieve OTP" >&2
     exit 1
   fi
 else
@@ -148,11 +148,11 @@ verify_http_code=$(echo "$verify_response" | tail -n1)
 # ステータスコードをチェックし、レスポンスを出力
 if [ "$verify_http_code" -eq 200 ]; then
   # do nothing
-  echo "OTPVerify request successful"
+  echo "OTPVerify request successful" >&2
 else
-  echo "OTPVerify request failed with status code: $verify_http_code"
-  echo "Response:"
-  echo "$verify_http_body"
+  echo "OTPVerify request failed with status code: $verify_http_code" >&2
+  echo "Response:" >&2
+  echo "$verify_http_body" >&2
   exit 1
 fi
 
@@ -191,15 +191,15 @@ if [ "$sms_http_code" -eq 200 ]; then
   # SMS用のOTPを取得
   sms_otp=$(./otp.sh "sms" "$session_id")
   if [ $? -eq 0 ]; then
-    echo "OTP retrieved successfully"
+    echo "OTP retrieved successfully" >&2
   else
-    echo "Failed to retrieve SMS OTP"
+    echo "Failed to retrieve SMS OTP" >&2
     exit 1
   fi
 else
-  echo "OTPSendSMS request failed with status code: $sms_http_code"
-  echo "Response:"
-  echo "$sms_http_body"
+  echo "OTPSendSMS request failed with status code: $sms_http_code" >&2
+  echo "Response:" >&2
+  echo "$sms_http_body" >&2
   exit 1
 fi
 
@@ -236,12 +236,11 @@ sms_verify_http_code=$(echo "$sms_verify_response" | tail -n1)
 if [ "$sms_verify_http_code" -eq 200 ]; then
   # アクセストークンを抽出して表示
   access_token=$(echo "$sms_verify_http_body" | jq -r '.accessToken')
-  echo ""
-  echo "$access_token"
-  echo ""
+  echo "$access_token" >&2
+  exit 0
 else
-  echo "OTPVerifySMS request failed with status code: $sms_verify_http_code"
-  echo "Response:"
-  echo "$sms_verify_http_body"
+  echo "OTPVerifySMS request failed with status code: $sms_verify_http_code" >&2
+  echo "Response:" >&2
+  echo "$sms_verify_http_body" >&2
   exit 1
 fi
