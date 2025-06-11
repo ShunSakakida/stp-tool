@@ -1,22 +1,32 @@
 #!/bin/zsh
-# bash ./signup_stg01.sh 08059369965 shun.sakakida@kenedix-st.com individual
+# bash ./signup.sh stg01 08059369965 shun.sakakida@kenedix-st.com individual
 
 
-if [ $# -lt 3 ]; then
-    echo "Usage: $0 <session_id> <type>"
+if [ $# -lt 4 ]; then
+    echo "Usage: $0 <environment> <phone_number> <email_address> <customer_type>"
     exit 1
 fi
 
-phone_number=$1
-email_address=$2
-customer_type=$3
+# Check if the environment identifier is valid
+environment=$1
+if [[ "$environment" != "dev" && "$environment" != "stg01" && "$environment" != "stg02" ]]; then
+    echo "Invalid environment identifier. Must be one of: dev, stg01, stg02."
+    exit 1
+fi
+
+# Shift arguments to process the rest
+shift
+
+phone_number=$2
+email_address=$3
+customer_type=$4
 
 
 # ベースURLとエンドポイントを定義
-base_url="https://api.kdx-sto-stg01.com/v1"
+base_url="https://api.kdx-sto-$environment.com/v1"
 endpoint="/customer/signup"
-origin="https://www.kdx-sto-stg01.com"
-host="api.kdx-sto-stg01.com"
+origin="https://www.kdx-sto-$environment.com"
+host="api.kdx-sto-$environment.com"
 type="signup"
 
 ###############################################################
@@ -93,7 +103,7 @@ http_code=$(echo "$response" | tail -n1)
 if [ "$http_code" -eq 200 ]; then
   echo "OTPSendEmail request successful"
   # OTPを取得
-  otp=$(./otp_aws_command.sh "email" "$session_id")
+  otp=$(./otp.sh "email" "$session_id")
   if [ $? -eq 0 ]; then
     # do nothing
     echo "OTP retrieved successfully"
@@ -182,7 +192,7 @@ sms_http_code=$(echo "$sms_response" | tail -n1)
 if [ "$sms_http_code" -eq 200 ]; then
 
   # SMS用のOTPを取得
-  sms_otp=$(./otp_aws_command.sh "sms" "$session_id")
+  sms_otp=$(./otp.sh "sms" "$session_id")
   if [ $? -eq 0 ]; then
     echo "OTP retrieved successfully"
   else

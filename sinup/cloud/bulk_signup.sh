@@ -1,11 +1,24 @@
 #!/bin/zsh
 # ./stg01.csv
 
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <environment>"
+    exit 1
+fi
+
+environment=$1
+if [[ "$environment" != "dev" && "$environment" != "stg01" && "$environment" != "stg02" ]]; then
+    echo "Invalid environment identifier. Must be one of: dev, stg01, stg02."
+    exit 1
+fi
+
+
 echo "Starting bulk signup"
 
 # Check if the CSV file exists
-if [ ! -f "./stg01.csv" ]; then
-    echo "Error: stg01.csv not found"
+file = ./$environment.csv
+if [ ! -f "$file" ]; then
+    echo "Error: $environment.csv not found"
     exit 1
 fi
 
@@ -20,11 +33,10 @@ while IFS=, read -r phone email customer_type; do
 
     echo "Processing: Phone: $phone, Email: $email, Customer Type: $customer_type"
 
-    # Call signup_stg01.sh with phone and email
-    ./signup_stg01.sh "$phone" "$email" "$customer_type"
+    # Call signup.sh with phone and email
+    ./signup_$environment.sh "$phone" "$email" "$customer_type"
 
     echo "signup completed"
 
     echo "----------------------------------------"
-done < stg01.csv
-
+done < $file
