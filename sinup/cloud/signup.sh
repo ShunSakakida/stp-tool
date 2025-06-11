@@ -240,9 +240,7 @@ if [ "$sms_verify_http_code" -eq 200 ]; then
   # アクセストークンを抽出して表示
   access_token=$(echo "$sms_verify_http_body" | jq -r '.accessToken')
   echo ""
-  echo ""
   echo "$access_token"
-  echo ""
   echo ""
 else
   echo "OTPVerifySMS request failed with status code: $sms_verify_http_code"
