@@ -17,7 +17,7 @@ fi
 echo "Starting bulk signup"
 
 # Check if the CSV file exists
-file = ./$environment.csv
+file=./$environment.csv
 if [ ! -f "$file" ]; then
     echo "Error: $environment.csv not found"
     exit 1
