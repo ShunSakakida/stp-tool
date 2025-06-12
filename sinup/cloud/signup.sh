@@ -110,8 +110,7 @@ if [ "$http_code" -eq 200 ]; then
   fi
 else
   echo "OTPSendEmail request failed with status code: $http_code" >&2
-  echo "Response:"
-  echo "$http_body"
+  echo "Response: $http_body" >&2
   exit 1
 fi
 
