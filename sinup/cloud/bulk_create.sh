@@ -2,8 +2,8 @@
 # bash ./bulk_signup.sh stg01
 # ./stg01.csv
 
-if [ $# -lt 1 ]; then
-    echo "Usage: $0 <environment>"
+if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+    echo "Usage: $0 <environment> [additional argument]"
     exit 1
 fi
 
@@ -11,6 +11,13 @@ environment=$1
 if [[ "$environment" != "dev" && "$environment" != "stg01" && "$environment" != "stg02" ]]; then
     echo "Invalid environment identifier. Must be one of: dev, stg01, stg02."
     exit 1
+fi
+
+is_create_individual_profile=$2
+if [ "$is_create_individual_profile" == "0" ] || [ "$is_create_individual_profile" == "false" ]; then
+    is_create_individual_profile=false
+else
+    is_create_individual_profile=true
 fi
 
 
@@ -48,9 +55,8 @@ while IFS=, read -r phone email customer_type last_name first_name; do
     echo ""
     echo "signup completed ----------------------------------------"
 
-    ./create_individual_profile.sh "$environment" "$last_name" "$first_name" "$access_token"
-    if [ $? -ne 0 ]; then
-        echo "create individual profile failed ----------------------------------------"
+    if [ "$is_create_individual_profile" == false ]; then
+        echo "create individual profile skipped ----------------------------------------"
         continue
     fi
     echo ""
