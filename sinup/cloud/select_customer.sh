@@ -42,6 +42,5 @@ while IFS=, read -r phone email customer_type last_name first_name; do
         --profile stp-$environment \
         --output json | jq -r '.Items[].PK.S | sub("^customer#"; "")')
     echo "$customer_id"
-    echo ""
 
 done < $file
