@@ -31,8 +31,6 @@ while IFS=, read -r phone email customer_type last_name first_name; do
     last_name=$(echo $last_name | tr -d ' ')
     first_name=$(echo $first_name | tr -d ' ')
 
-    echo "Processing: Environment: $environment, Phone: $phone, Email: $email, Customer Type: $customer_type, Last Name: $last_name, First Name: $first_name ----------------------------------------"
-    echo ""
 
     customer_id=$(aws dynamodb scan \
         --table-name stp-$environment-customer-tbl \
