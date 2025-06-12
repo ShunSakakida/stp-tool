@@ -59,6 +59,12 @@ while IFS=, read -r phone email customer_type last_name first_name; do
         echo "create individual profile skipped ----------------------------------------"
         continue
     fi
+
+    ./create_individual_profile.sh "$environment" "$last_name" "$first_name" "$access_token"
+    if [ $? -ne 0 ]; then
+        echo "create individual profile failed ----------------------------------------"
+        continue
+    fi
     echo ""
     echo "create individual profile completed ----------------------------------------"
     echo ""
