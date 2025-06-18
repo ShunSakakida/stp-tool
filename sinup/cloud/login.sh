@@ -1,9 +1,9 @@
 #!/bin/zsh
-# bash ./signup.sh stg01 08059369965 shun.sakakida@kenedix-st.com individual
+# bash ./signup.sh stg01 shun.sakakida@kenedix-st.com
 
 
-if [ $# -lt 4 ]; then
-    echo "Usage: $0 <environment> <phone_number> <email_address> <customer_type>" >&2
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <environment><email_address>" >&2
     exit 1
 fi
 
@@ -14,27 +14,25 @@ if [[ "$environment" != "dev" && "$environment" != "stg01" && "$environment" != 
     exit 1
 fi
 
-phone_number=$2
-email_address=$3
-customer_type=$4
+email_address=$2
 
 
 # ベースURLとエンドポイントを定義
 base_url="https://api.kdx-sto-$environment.com/v1"
-endpoint="/customer/signup"
+endpoint="/customer/login"
 origin="https://www.kdx-sto-$environment.com"
 host="api.kdx-sto-$environment.com"
-type="signup"
+type="login"
 
 ###############################################################
-# リクエスト① SignUp
+# リクエスト① login
 ###############################################################
 # リクエストのペイロードをJSON形式で作成
 payload=$(cat <<EOF
 {
-  "customerType": "$customer_type",
   "emailAddress": "$email_address",
-  "phoneNumber": "$phone_number"
+  "isFIDODefaultLoginMethod": false,
+  "OS": "mac"
 }
 EOF
 )
@@ -64,37 +62,14 @@ else
   exit 1
 fi
 
+
 ###############################################################
-# リクエスト② OTPSendEmail
+# リクエスト② OTPVerifyEmail
 ###############################################################
 
 # メールアドレスとセッションIDを設定
 email_address="$email_address"  # 先のリクエストで使用したメールアドレス
 session_id="$session_id"  # 先のリクエストで取得したセッションID
-
-# リクエストのペイロードをJSON形式で作成
-payload=$(cat <<EOF
-{
-  "emailAddress": "$email_address",
-  "sessionID": "$session_id"
-}
-EOF
-)
-
-# curlを使用してPOSTリクエストを送信
-response=$(curl -s -w "\n%{http_code}" -X POST "$base_url/customer/otp/send/email?type=$type" \
-  -H "Content-Type: application/json" \
-  -H "User-Agent: PostmanRuntime/7.43.0" \
-  -H "Accept: */*" \
-  -H "Cache-Control: no-cache" \
-  -H "Host: ${host}" \
-  -H "Accept-Encoding: gzip, deflate, br" \
-  -H "Connection: keep-alive" \
-  -d "$payload")
-
-# レスポンスのステータスコードとボディを分割
-http_body=$(echo "$response" | sed '$d')
-http_code=$(echo "$response" | tail -n1)
 
 # ステータスコードをチェックし、レスポンスを出力
 if [ "$http_code" -eq 200 ]; then
@@ -114,10 +89,6 @@ else
   exit 1
 fi
 
-
-###############################################################
-# リクエスト③ OTPVerifyEmail
-###############################################################
 
 # OTP検証のペイロードをJSON形式で作成
 verify_payload=$(cat <<EOF
@@ -156,14 +127,13 @@ else
 fi
 
 ###############################################################
-# リクエスト④ OTPSendSMS
+# リクエスト③ OTPSendSMS
 ###############################################################
 
 # SMS送信用のペイロードをJSON形式で作成
 sms_payload=$(cat <<EOF
 {
   "emailAddress": "$email_address",
-  "phoneNumber": "$phone_number",
   "sessionID": "$session_id"
 }
 EOF
@@ -203,7 +173,7 @@ else
 fi
 
 ###############################################################
-# リクエスト⑤ OTPVerifySMS
+# リクエスト④ OTPVerifySMS
 ###############################################################
 
 # SMS OTP検証のペイロードをJSON形式で作成
