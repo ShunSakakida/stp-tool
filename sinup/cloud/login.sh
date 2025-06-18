@@ -1,5 +1,5 @@
 #!/bin/zsh
-# bash ./signup.sh stg01 shun.sakakida@kenedix-st.com
+# bash ./login.sh stg01 shun.sakakida@kenedix-st.com
 
 
 if [ $# -lt 2 ]; then

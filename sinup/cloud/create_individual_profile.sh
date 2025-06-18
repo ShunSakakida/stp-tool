@@ -14,15 +14,51 @@ fi
 
 last_name=$2
 first_name=$3
-access_token=$4
+last_name_kana=$4
+first_name_kana=$5
+gender=$6
+birthday=$7
+post_code=$8
+access_token=$9
+
+# Validate birthday format (YYYYMMDD)
+if ! [[ "$birthday" =~ ^[0-9]{8}$ ]]; then
+    echo "Invalid birthday format. Must be YYYYMMDD (e.g., 19990101)" >&2
+    exit 1
+fi
+
+# Extract year, month, and day
+birth_year=${birthday:0:4}
+birth_month=${birthday:4:2}
+birth_day=${birthday:6:2}
+
+# Validate date components
+if ! date -j -f "%Y%m%d" "$birthday" >/dev/null 2>&1; then
+    echo "Invalid date. Please check the birthday values." >&2
+    exit 1
+fi
+
+# Display input parameters
+echo "Processing parameters:"
+echo "----------------------------------------"
+echo "Environment: $environment"
+echo "Phone: $phone"
+echo "Email: $email"
+echo "Customer Type: $customer_type"
+echo "Last Name: $last_name"
+echo "First Name: $first_name"
+echo "Last Name Kana: $last_name_kana"
+echo "First Name Kana: $first_name_kana"
+echo "Gender: $gender"
+echo "Birthday: $birthday"
+echo "Post Code: $post_code"
+echo "----------------------------------------"
 
 # ベースURLとエンドポイントを定義
 base_url="https://api.kdx-sto-$environment.com/v1"
 endpoint="/customer/profile/individual"
 origin="https://www.kdx-sto-$environment.com"
 host="api.kdx-sto-$environment.com"
-
-
 
 ###############################################################
 # Create Individual Profile
@@ -33,19 +69,19 @@ payload=$(cat <<EOF
     "individualProfile": {
         "firstName": "$first_name",
         "lastName": "$last_name",
-        "firstNameKana": "テスト",
-        "lastNameKana": "シナリオ",
-        "gender": "male",
+        "firstNameKana": "$first_name_kana",
+        "lastNameKana": "$last_name_kana",
+        "gender": "$gender",
         "birthDate": {
-            "year": 1999,
-            "month": 12,
-            "day": 31
+            "year": $birth_year,
+            "month": $birth_month,
+            "day": $birth_day
         },
         "nationality": "japan",
         "isJapaneseResident": true,
         "countryOfResidence": "japan",
         "address": {
-            "postCode": "1000011",
+            "postCode": "$post_code",
             "prefecture": "東京都",
             "city": "千代田区内幸町",
             "district": "千代田区内幸町２ー１ー６"
