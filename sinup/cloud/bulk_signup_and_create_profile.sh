@@ -1,5 +1,5 @@
 #!/bin/zsh
-# bash ./bulk_signup.sh stg01
+# bash ./bulk_signup_and_create_profile.sh stg01
 # ./stg01.csv
 
 if [ $# -lt 1 ] || [ $# -gt 2 ]; then
