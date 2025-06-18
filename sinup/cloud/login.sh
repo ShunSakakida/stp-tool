@@ -187,7 +187,7 @@ EOF
 )
 
 # curlを使用してSMS OTP検証リクエストを送信
-sms_verify_response=$(curl -s -w "\n%{http_code}" -X POST "$base_url/customer/otp/verify/sms?type=signup" \
+sms_verify_response=$(curl -s -w "\n%{http_code}" -X POST "$base_url/customer/otp/verify/sms?type=$type" \
   -H "Content-Type: application/json" \
   -H "User-Agent: PostmanRuntime/7.43.0" \
   -H "Accept: */*" \
